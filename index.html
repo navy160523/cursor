@@ -10,6 +10,19 @@
     <div class="container">
         <h1>Q&A 게시판</h1>
         
+        <div class="chat-box">
+            <h2>실시간 채팅</h2>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-nickname">
+                현재 닉네임: <span id="chatAuthorDisplay"></span>
+                <button onclick="changeNickname()" class="small-button">변경</button>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatMessage" placeholder="메시지를 입력하세요">
+                <button onclick="sendMessage()">전송</button>
+            </div>
+        </div>
+
         <div class="question-form">
             <h2>질문하기</h2>
             <input type="text" id="questionTitle" placeholder="질문 제목">
