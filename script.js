@@ -13,38 +13,6 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const auth = firebase.auth();
-const provider = new firebase.auth.GoogleAuthProvider();
-
-// DOM elements
-const whenSignedIn = document.getElementById('whenSignedIn');
-const whenSignedOut = document.getElementById('whenSignedOut');
-const signInBtn = document.getElementById('signInBtn');
-const signOutBtn = document.getElementById('signOutBtn');
-const userDetails = document.getElementById('userDetails');
-const questionForm = document.getElementById('questionForm');
-
-// Sign in/out handlers
-signInBtn.onclick = () => auth.signInWithPopup(provider);
-signOutBtn.onclick = () => auth.signOut();
-
-// Auth state observer
-auth.onAuthStateChanged(user => {
-    if (user) {
-        whenSignedIn.hidden = false;
-        whenSignedOut.hidden = true;
-        questionForm.hidden = false;
-        userDetails.innerHTML = `
-            <img src="${user.photoURL}" alt="프로필 사진">
-            <span>${user.displayName}</span>
-        `;
-    } else {
-        whenSignedIn.hidden = true;
-        whenSignedOut.hidden = false;
-        questionForm.hidden = true;
-        userDetails.innerHTML = '';
-    }
-});
 
 // 질문 목록을 실시간으로 가져오기
 function loadQuestions() {
@@ -55,27 +23,21 @@ function loadQuestions() {
             snapshot.forEach((doc) => {
                 questions.push({ 
                     id: doc.id, 
-                    ...doc.data(),
-                    userId: doc.data().userId,
-                    userDisplayName: doc.data().userDisplayName
+                    ...doc.data()
                 });
             });
             updateQuestionsList();
         });
 }
 
-// 질문 추가 함수 수정
+// 질문 추가 함수
 async function addQuestion() {
-    if (!auth.currentUser) {
-        alert('질문을 작성하려면 로그인이 필요합니다.');
-        return;
-    }
-
     const title = document.getElementById('questionTitle').value;
     const content = document.getElementById('questionContent').value;
+    const authorName = document.getElementById('authorName').value;
     
-    if (!title || !content) {
-        alert('제목과 내용을 모두 입력해주세요!');
+    if (!title || !content || !authorName) {
+        alert('제목, 내용, 작성자 이름을 모두 입력해주세요!');
         return;
     }
 
@@ -83,10 +45,9 @@ async function addQuestion() {
         await db.collection('questions').add({
             title: title,
             content: content,
+            authorName: authorName,
             answers: [],
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            userId: auth.currentUser.uid,
-            userDisplayName: auth.currentUser.displayName
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
         clearForm();
     } catch (error) {
@@ -95,17 +56,13 @@ async function addQuestion() {
     }
 }
 
-// 답변 추가 함수 수정
+// 답변 추가 함수
 async function addAnswer(questionId) {
-    if (!auth.currentUser) {
-        alert('답변을 작성하려면 로그인이 필요합니다.');
-        return;
-    }
-
     const answerContent = document.getElementById(`answer-${questionId}`).value;
+    const authorName = document.getElementById(`answer-author-${questionId}`).value;
     
-    if (!answerContent) {
-        alert('답변 내용을 입력해주세요!');
+    if (!answerContent || !authorName) {
+        alert('답변 내용과 작성자 이름을 입력해주세요!');
         return;
     }
 
@@ -114,12 +71,12 @@ async function addAnswer(questionId) {
         await questionRef.update({
             answers: firebase.firestore.FieldValue.arrayUnion({
                 content: answerContent,
-                timestamp: new Date().toLocaleString(),
-                userId: auth.currentUser.uid,
-                userDisplayName: auth.currentUser.displayName
+                authorName: authorName,
+                timestamp: new Date().toLocaleString()
             })
         });
         document.getElementById(`answer-${questionId}`).value = '';
+        document.getElementById(`answer-author-${questionId}`).value = '';
     } catch (error) {
         console.error("Error adding answer: ", error);
         alert('답변 등록 중 오류가 발생했습니다.');
@@ -141,28 +98,23 @@ function updateQuestionsList() {
         questionCard.innerHTML = `
             <h3>${question.title}</h3>
             <p>${question.content}</p>
-            <small>작성자: ${question.userDisplayName} | 작성시간: ${timestamp}</small>
+            <small>작성자: ${question.authorName} | 작성시간: ${timestamp}</small>
             
             <div class="answers">
                 <h4>답변 목록:</h4>
                 ${question.answers.map(answer => `
                     <div class="answer">
                         <p>${answer.content}</p>
-                        <small>작성자: ${answer.userDisplayName} | 작성시간: ${answer.timestamp}</small>
+                        <small>작성자: ${answer.authorName} | 작성시간: ${answer.timestamp}</small>
                     </div>
                 `).join('')}
             </div>
             
-            ${auth.currentUser ? `
-                <div class="answer-form">
-                    <textarea id="answer-${question.id}" placeholder="답변을 입력하세요"></textarea>
-                    <button onclick="addAnswer('${question.id}')">답변 등록</button>
-                </div>
-            ` : `
-                <div class="login-required-message">
-                    답변을 작성하려면 로그인이 필요합니다.
-                </div>
-            `}
+            <div class="answer-form">
+                <input type="text" id="answer-author-${question.id}" placeholder="작성자 이름">
+                <textarea id="answer-${question.id}" placeholder="답변을 입력하세요"></textarea>
+                <button onclick="addAnswer('${question.id}')">답변 등록</button>
+            </div>
         `;
         
         questionsList.appendChild(questionCard);
@@ -172,6 +124,7 @@ function updateQuestionsList() {
 function clearForm() {
     document.getElementById('questionTitle').value = '';
     document.getElementById('questionContent').value = '';
+    document.getElementById('authorName').value = '';
 }
 
 // 페이지 로드 시 질문 목록 불러오기
