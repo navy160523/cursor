@@ -1,5 +1,4 @@
 let questions = [];
-let autoDeleteInterval; // 인터벌 ID를 저장할 변수
 
 // Firebase 초기화
 const firebaseConfig = {
@@ -323,73 +322,6 @@ async function clearAllMessages() {
         alert('메시지 삭제 중 오류가 발생했습니다.');
     }
 }
-
-// 300초마다 메시지 자동 삭제 함수
-async function autoDeleteMessages() {
-    try {
-        const messagesRef = db.collection('messages');
-        const snapshot = await messagesRef.get();
-        
-        // 배치 작업으로 메시지 삭제
-        const batch = db.batch();
-        snapshot.docs.forEach((doc) => {
-            batch.delete(messagesRef.doc(doc.id));
-        });
-        
-        await batch.commit();
-        console.log('메시지가 자동으로 삭제되었습니다.');
-        
-        // 채팅창 새로고침
-        loadMessages();
-        
-        // 삭제 시간 표시
-        const chatMessages = document.getElementById('chatMessages');
-        chatMessages.innerHTML = `
-            <div class="system-message">
-                채팅이 초기화되었습니다. (${new Date().toLocaleTimeString()})
-            </div>
-        `;
-    } catch (error) {
-        console.error("Error auto-clearing messages: ", error);
-    }
-}
-
-// 자동 삭제 시작 함수
-function startAutoDelete() {
-    if (autoDeleteInterval) {
-        clearInterval(autoDeleteInterval);
-    }
-    autoDeleteInterval = setInterval(autoDeleteMessages, 300000); // 5분
-    console.log('자동 삭제 시작');
-}
-
-// 자동 삭제 중지 함수
-function stopAutoDelete() {
-    if (autoDeleteInterval) {
-        clearInterval(autoDeleteInterval);
-        autoDeleteInterval = null;
-        console.log('자동 삭제 중지');
-    }
-}
-
-// 체크박스 이벤트 리스너
-document.getElementById('autoClearEnabled')?.addEventListener('change', function(e) {
-    if (e.target.checked) {
-        startAutoDelete();
-    } else {
-        stopAutoDelete();
-    }
-});
-
-// 페이지 로드 시 자동 삭제 시작 (체크박스 상태에 따라)
-document.addEventListener('DOMContentLoaded', function() {
-    const autoClearEnabled = document.getElementById('autoClearEnabled');
-    // 기본값으로 체크 해제
-    if (autoClearEnabled) {
-        autoClearEnabled.checked = false;
-    }
-    // 자동 삭제는 시작하지 않음 (체크되어 있을 때만 시작)
-});
 
 // 페이지 로드 시 채팅 메시지와 질문 목록 불러오기
 loadMessages();
