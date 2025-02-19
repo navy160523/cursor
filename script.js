@@ -106,22 +106,22 @@ function updateQuestionsList() {
         questionCard.innerHTML = `
             <div class="card-body">
                 <h3 class="card-title">
-                    <i class="material-icons">help_outline</i> ${question.title}
+                    <i class="material-icons"></i> ${question.title}
                 </h3>
                 <p class="card-text">${question.content}</p>
                 <div class="metadata">
-                    <span><i class="material-icons">person</i> ${question.authorName}</span>
-                    <span><i class="material-icons">access_time</i> ${timestamp}</span>
+                    <span><i class="material-icons">작성자</i> ${question.authorName}</span>
+                    <span><i class="material-icons">작성시간</i> ${timestamp}</span>
                 </div>
                 
                 <div class="answers mt-4">
-                    <h4><i class="material-icons">forum</i> 답변 목록</h4>
+                    <h4> 답변 목록</h4>
                     ${question.answers.map(answer => `
                         <div class="answer animate__animated animate__fadeIn">
                             <p>${answer.content}</p>
                             <div class="metadata">
-                                <span><i class="material-icons">person</i> ${answer.authorName}</span>
-                                <span><i class="material-icons">access_time</i> ${answer.timestamp}</span>
+                                <span><i class="material-icons">작성자</i> ${answer.authorName}</span>
+                                <span><i class="material-icons">작성시간</i> ${answer.timestamp}</span>
                             </div>
                         </div>
                     `).join('')}
@@ -133,7 +133,7 @@ function updateQuestionsList() {
                     <textarea id="answer-${question.id}" 
                         class="form-control mb-2" placeholder="답변을 입력하세요"></textarea>
                     <button onclick="addAnswer('${question.id}')" class="btn btn-primary">
-                        <i class="material-icons">reply</i> 답변 등록
+                        답변 등록
                     </button>
                 </div>
             </div>
