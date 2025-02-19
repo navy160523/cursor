@@ -253,6 +253,30 @@ function changeNickname() {
     }
 }
 
+// 전체 메시지 삭제 함수
+async function clearAllMessages() {
+    if (!confirm('모든 채팅 내용을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
+        return;
+    }
+
+    try {
+        const messagesRef = db.collection('messages');
+        const snapshot = await messagesRef.get();
+        
+        // 배치 작업으로 메시지 삭제
+        const batch = db.batch();
+        snapshot.docs.forEach((doc) => {
+            batch.delete(messagesRef.doc(doc.id));
+        });
+        
+        await batch.commit();
+        alert('모든 메시지가 삭제되었습니다.');
+    } catch (error) {
+        console.error("Error clearing messages: ", error);
+        alert('메시지 삭제 중 오류가 발생했습니다.');
+    }
+}
+
 // 페이지 로드 시 채팅 메시지와 질문 목록 불러오기
 loadMessages();
 loadQuestions();
