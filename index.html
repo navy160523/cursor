@@ -11,7 +11,10 @@
         <h1>Q&A 게시판</h1>
         
         <div class="chat-box">
-            <h2>실시간 채팅</h2>
+            <div class="chat-header">
+                <h2>실시간 채팅</h2>
+                <button onclick="clearAllMessages()" class="clear-button">전체 삭제</button>
+            </div>
             <div class="chat-messages" id="chatMessages"></div>
             <div class="chat-nickname">
                 현재 닉네임: <span id="chatAuthorDisplay"></span>
