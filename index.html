@@ -8,9 +8,19 @@
 </head>
 <body>
     <div class="container">
+        <div class="auth-container">
+            <div id="whenSignedOut">
+                <button id="signInBtn">Google로 로그인</button>
+            </div>
+            <div id="whenSignedIn" hidden>
+                <div id="userDetails"></div>
+                <button id="signOutBtn">로그아웃</button>
+            </div>
+        </div>
+
         <h1>Q&A 게시판</h1>
         
-        <div class="question-form">
+        <div class="question-form" id="questionForm" hidden>
             <h2>질문하기</h2>
             <input type="text" id="questionTitle" placeholder="질문 제목">
             <textarea id="questionContent" placeholder="질문 내용을 입력하세요"></textarea>
@@ -22,6 +32,10 @@
             <div id="questionsList"></div>
         </div>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
     <script src="script.js"></script>
 </body>
 </html>    
