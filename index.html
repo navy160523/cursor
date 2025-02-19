@@ -8,12 +8,22 @@
 </head>
 <body>
     <div class="container">
-        <h1>Q&A 게시판</h1>
+        <h1>톡투유</h1>
+        <button id="toggleQnAButton" class="toggle-button">Q&A 보기/숨기기</button>
         
         <div class="chat-box">
             <div class="chat-header">
-                <h2>실시간 채팅</h2><h6 style="align-items: start;">5분마다 초기화됩니다</h6>
-                <button onclick="clearAllMessages()" class="clear-button">전체 삭제</button>
+                <div class="chat-title">
+                    <h2>실시간 채팅</h2>
+                    <h6 style="align-items: start;">5분마다 초기화됩니다</h6>
+                </div>
+                <div class="chat-controls">
+                    <label class="auto-clear-toggle">
+                        <input type="checkbox" id="autoClearEnabled">
+                        <span class="toggle-label">자동 초기화</span>
+                    </label>
+                    <button onclick="clearAllMessages()" class="clear-button">전체 삭제</button>
+                </div>
             </div>
             <div class="chat-messages" id="chatMessages"></div>
             <div class="chat-nickname">
@@ -24,22 +34,23 @@
                 </div>
             </div>
             <div class="chat-input">
-                <input type="text" id="chatMessage" placeholder="메시지를 입력하세요">
-                <button onclick="sendMessage()">전송</button>
+                <input type="text" id="chatMessage" placeholder="메시지를 입력하세요 (Enter를 눌러 전송)">
             </div>
         </div>
 
-        <div class="question-form">
-            <h2>질문하기</h2>
-            <input type="text" id="questionTitle" placeholder="질문 제목">
-            <input type="text" id="authorName" placeholder="작성자 이름">
-            <textarea id="questionContent" placeholder="질문 내용을 입력하세요"></textarea>
-            <button onclick="addQuestion()">질문 등록</button>
-        </div>
+        <div id="qnaSection" class="qna-section" style="display: none;">
+            <div class="question-form">
+                <h2>질문하기</h2>
+                <input type="text" id="questionTitle" placeholder="질문 제목">
+                <input type="text" id="authorName" placeholder="작성자 이름">
+                <textarea id="questionContent" placeholder="질문 내용을 입력하세요"></textarea>
+                <button onclick="addQuestion()">질문 등록</button>
+            </div>
 
-        <div class="questions-list">
-            <h2>질문 목록</h2>
-            <div id="questionsList"></div>
+            <div class="questions-list">
+                <h2>질문 목록</h2>
+                <div id="questionsList"></div>
+            </div>
         </div>
     </div>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
