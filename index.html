@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q&A 사이트</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Q&A 게시판</h1>
+        
+        <div class="question-form">
+            <h2>질문하기</h2>
+            <input type="text" id="questionTitle" placeholder="질문 제목">
+            <textarea id="questionContent" placeholder="질문 내용을 입력하세요"></textarea>
+            <button onclick="addQuestion()">질문 등록</button>
+        </div>
+
+        <div class="questions-list">
+            <h2>질문 목록</h2>
+            <div id="questionsList"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>    
