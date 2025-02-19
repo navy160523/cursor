@@ -1,4 +1,5 @@
 let questions = [];
+let autoDeleteInterval; // 인터벌 ID를 저장할 변수
 
 // Firebase 초기화
 const firebaseConfig = {
@@ -91,51 +92,62 @@ async function addAnswer(questionId) {
     }
 }
 
+// 질문 삭제 함수 추가
+async function deleteQuestion(questionId) {
+    if (!confirm('이 질문을 삭제하시겠습니까?\n답변도 함께 삭제됩니다.')) {
+        return;
+    }
+
+    try {
+        await db.collection('questions').doc(questionId).delete();
+        console.log('질문이 삭제되었습니다.');
+    } catch (error) {
+        console.error("Error deleting question: ", error);
+        alert('질문 삭제 중 오류가 발생했습니다.');
+    }
+}
+
+// updateQuestionsList 함수 수정
 function updateQuestionsList() {
     const questionsList = document.getElementById('questionsList');
     questionsList.innerHTML = '';
 
     questions.forEach(question => {
         const questionCard = document.createElement('div');
-        questionCard.className = 'card question-card animate__animated animate__fadeIn mb-4';
+        questionCard.className = 'question-card';
         
         const timestamp = question.timestamp ? 
             new Date(question.timestamp.toDate()).toLocaleString() : 
             '시간 정보 없음';
         
         questionCard.innerHTML = `
-            <div class="card-body">
-                <h3 class="card-title">
-                    <i class="material-icons"></i> ${question.title}
-                </h3>
-                <p class="card-text">${question.content}</p>
-                <div class="metadata">
-                    <span><i class="material-icons">작성자</i> ${question.authorName}</span>
-                    <span><i class="material-icons">작성시간</i> ${timestamp}</span>
-                </div>
-                
-                <div class="answers mt-4">
-                    <h4> 답변 목록</h4>
-                    ${question.answers.map(answer => `
-                        <div class="answer animate__animated animate__fadeIn">
-                            <p>${answer.content}</p>
-                            <div class="metadata">
-                                <span><i class="material-icons">작성자</i> ${answer.authorName}</span>
-                                <span><i class="material-icons">작성시간</i> ${answer.timestamp}</span>
-                            </div>
+            <div class="question-header">
+                <h3>${question.title}</h3>
+                <button onclick="deleteQuestion('${question.id}')" class="delete-button">삭제</button>
+            </div>
+            <p>${question.content}</p>
+            <div class="metadata">
+                <span>작성자: ${question.authorName}</span>
+                <span>작성시간: ${timestamp}</span>
+            </div>
+            
+            <div class="answers">
+                <h4>답변 목록</h4>
+                ${question.answers.map(answer => `
+                    <div class="answer">
+                        <p>${answer.content}</p>
+                        <div class="metadata">
+                            <span>작성자: ${answer.authorName}</span>
+                            <span>작성시간: ${answer.timestamp}</span>
                         </div>
-                    `).join('')}
-                </div>
-                
-                <div class="answer-form mt-3">
-                    <input type="text" id="answer-author-${question.id}" 
-                        class="form-control mb-2" placeholder="작성자 이름">
-                    <textarea id="answer-${question.id}" 
-                        class="form-control mb-2" placeholder="답변을 입력하세요"></textarea>
-                    <button onclick="addAnswer('${question.id}')" class="btn btn-primary">
-                        답변 등록
-                    </button>
-                </div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <div class="answer-form">
+                <input type="text" id="answer-author-${question.id}" placeholder="작성자 이름">
+                <textarea id="answer-${question.id}" placeholder="답변을 입력하세요"></textarea>
+                <button onclick="addAnswer('${question.id}')">답변 등록</button>
             </div>
         `;
         
@@ -342,10 +354,56 @@ async function autoDeleteMessages() {
     }
 }
 
-// 300초마다 자동 삭제 실행 (300000ms = 300초)
-setInterval(autoDeleteMessages, 300000);
+// 자동 삭제 시작 함수
+function startAutoDelete() {
+    if (autoDeleteInterval) {
+        clearInterval(autoDeleteInterval);
+    }
+    autoDeleteInterval = setInterval(autoDeleteMessages, 300000); // 5분
+    console.log('자동 삭제 시작');
+}
+
+// 자동 삭제 중지 함수
+function stopAutoDelete() {
+    if (autoDeleteInterval) {
+        clearInterval(autoDeleteInterval);
+        autoDeleteInterval = null;
+        console.log('자동 삭제 중지');
+    }
+}
+
+// 체크박스 이벤트 리스너
+document.getElementById('autoClearEnabled')?.addEventListener('change', function(e) {
+    if (e.target.checked) {
+        startAutoDelete();
+    } else {
+        stopAutoDelete();
+    }
+});
+
+// 페이지 로드 시 자동 삭제 시작 (체크박스 상태에 따라)
+document.addEventListener('DOMContentLoaded', function() {
+    const autoClearEnabled = document.getElementById('autoClearEnabled');
+    // 기본값으로 체크 해제
+    if (autoClearEnabled) {
+        autoClearEnabled.checked = false;
+    }
+    // 자동 삭제는 시작하지 않음 (체크되어 있을 때만 시작)
+});
 
 // 페이지 로드 시 채팅 메시지와 질문 목록 불러오기
 loadMessages();
 loadQuestions();
 updateNicknameDisplay();  // 닉네임 표시 업데이트
+
+// Q&A 섹션 토글 기능
+document.getElementById('toggleQnAButton')?.addEventListener('click', function() {
+    const qnaSection = document.getElementById('qnaSection');
+    if (qnaSection.style.display === 'none') {
+        qnaSection.style.display = 'block';
+        this.textContent = 'Q&A 숨기기';
+    } else {
+        qnaSection.style.display = 'none';
+        this.textContent = 'Q&A 보기';
+    }
+});
