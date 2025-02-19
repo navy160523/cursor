@@ -178,11 +178,27 @@ function saveNickname(nickname) {
     localStorage.setItem('chatNickname', nickname);
 }
 
+// 닉네임 색상 관련 함수 추가
+function getSavedNicknameColor() {
+    return localStorage.getItem('chatNicknameColor') || '#007bff';
+}
+
+function saveNicknameColor(color) {
+    localStorage.setItem('chatNicknameColor', color);
+}
+
+// 색상 선택 이벤트 리스너
+document.getElementById('nicknameColor')?.addEventListener('change', function(e) {
+    saveNicknameColor(e.target.value);
+    updateNicknameDisplay();
+});
+
 // 채팅 메시지 전송 함수 수정
 async function sendMessage() {
     const messageInput = document.getElementById('chatMessage');
     const message = messageInput.value.trim();
     let author = getSavedNickname();
+    const color = getSavedNicknameColor();
 
     if (!author) {
         author = prompt('닉네임을 입력해주세요:');
@@ -206,6 +222,7 @@ async function sendMessage() {
         await db.collection('messages').add({
             content: message,
             author: author,
+            color: color,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
         messageInput.value = '';
@@ -225,14 +242,13 @@ function updateChatMessages(messages) {
         
         return `
             <div class="message">
-                <span class="author">${message.author}</span>
+                <span class="author" style="color: ${message.color || '#007bff'}">${message.author}</span>
                 <span class="content">${message.content}</span>
                 <span class="time">${timestamp}</span>
             </div>
         `;
     }).join('');
     
-    // 스크롤을 항상 최신 메시지로 이동
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
@@ -243,17 +259,22 @@ document.getElementById('chatMessage')?.addEventListener('keypress', function(e)
     }
 });
 
-// 닉네임 표시 업데이트 함수
+// 닉네임 표시 업데이트 함수 수정
 function updateNicknameDisplay() {
     const nickname = getSavedNickname();
+    const color = getSavedNicknameColor();
     const chatAuthorDisplay = document.getElementById('chatAuthorDisplay');
+    const colorPicker = document.getElementById('nicknameColor');
     const chatInput = document.querySelector('.chat-input');
     
     if (nickname) {
         chatAuthorDisplay.textContent = nickname;
+        chatAuthorDisplay.style.color = color;
+        colorPicker.value = color;
         chatInput.classList.add('nickname-set');
     } else {
         chatAuthorDisplay.textContent = '닉네임을 설정해주세요';
+        chatAuthorDisplay.style.color = '#666';
         chatInput.classList.remove('nickname-set');
     }
 }
