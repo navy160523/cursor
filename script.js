@@ -97,31 +97,45 @@ function updateQuestionsList() {
 
     questions.forEach(question => {
         const questionCard = document.createElement('div');
-        questionCard.className = 'question-card';
+        questionCard.className = 'card question-card animate__animated animate__fadeIn mb-4';
         
         const timestamp = question.timestamp ? 
             new Date(question.timestamp.toDate()).toLocaleString() : 
             '시간 정보 없음';
         
         questionCard.innerHTML = `
-            <h3>${question.title}</h3>
-            <p>${question.content}</p>
-            <small>작성자: ${question.authorName} | 작성시간: ${timestamp}</small>
-            
-            <div class="answers">
-                <h4>답변 목록:</h4>
-                ${question.answers.map(answer => `
-                    <div class="answer">
-                        <p>${answer.content}</p>
-                        <small>작성자: ${answer.authorName} | 작성시간: ${answer.timestamp}</small>
-                    </div>
-                `).join('')}
-            </div>
-            
-            <div class="answer-form">
-                <input type="text" id="answer-author-${question.id}" placeholder="작성자 이름">
-                <textarea id="answer-${question.id}" placeholder="답변을 입력하세요"></textarea>
-                <button onclick="addAnswer('${question.id}')">답변 등록</button>
+            <div class="card-body">
+                <h3 class="card-title">
+                    <i class="material-icons">help_outline</i> ${question.title}
+                </h3>
+                <p class="card-text">${question.content}</p>
+                <div class="metadata">
+                    <span><i class="material-icons">person</i> ${question.authorName}</span>
+                    <span><i class="material-icons">access_time</i> ${timestamp}</span>
+                </div>
+                
+                <div class="answers mt-4">
+                    <h4><i class="material-icons">forum</i> 답변 목록</h4>
+                    ${question.answers.map(answer => `
+                        <div class="answer animate__animated animate__fadeIn">
+                            <p>${answer.content}</p>
+                            <div class="metadata">
+                                <span><i class="material-icons">person</i> ${answer.authorName}</span>
+                                <span><i class="material-icons">access_time</i> ${answer.timestamp}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="answer-form mt-3">
+                    <input type="text" id="answer-author-${question.id}" 
+                        class="form-control mb-2" placeholder="작성자 이름">
+                    <textarea id="answer-${question.id}" 
+                        class="form-control mb-2" placeholder="답변을 입력하세요"></textarea>
+                    <button onclick="addAnswer('${question.id}')" class="btn btn-primary">
+                        <i class="material-icons">reply</i> 답변 등록
+                    </button>
+                </div>
             </div>
         `;
         
@@ -276,6 +290,39 @@ async function clearAllMessages() {
         alert('메시지 삭제 중 오류가 발생했습니다.');
     }
 }
+
+// 300초마다 메시지 자동 삭제 함수
+async function autoDeleteMessages() {
+    try {
+        const messagesRef = db.collection('messages');
+        const snapshot = await messagesRef.get();
+        
+        // 배치 작업으로 메시지 삭제
+        const batch = db.batch();
+        snapshot.docs.forEach((doc) => {
+            batch.delete(messagesRef.doc(doc.id));
+        });
+        
+        await batch.commit();
+        console.log('메시지가 자동으로 삭제되었습니다.');
+        
+        // 채팅창 새로고침
+        loadMessages();
+        
+        // 삭제 시간 표시
+        const chatMessages = document.getElementById('chatMessages');
+        chatMessages.innerHTML = `
+            <div class="system-message">
+                채팅이 초기화되었습니다. (${new Date().toLocaleTimeString()})
+            </div>
+        `;
+    } catch (error) {
+        console.error("Error auto-clearing messages: ", error);
+    }
+}
+
+// 300초마다 자동 삭제 실행 (300000ms = 300초)
+setInterval(autoDeleteMessages, 300000);
 
 // 페이지 로드 시 채팅 메시지와 질문 목록 불러오기
 loadMessages();
