@@ -113,4 +113,12 @@ button:hover {
     border-radius: 4px;
     margin: 10px 0;
     color: #856404;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 } 
