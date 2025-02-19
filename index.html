@@ -17,8 +17,11 @@
             </div>
             <div class="chat-messages" id="chatMessages"></div>
             <div class="chat-nickname">
-                현재 닉네임: <span id="chatAuthorDisplay"></span>
-                <button onclick="changeNickname()" class="small-button">변경</button>
+                <div class="nickname-container">
+                    <span>현재 닉네임: <span id="chatAuthorDisplay"></span></span>
+                    <input type="color" id="nicknameColor" value="#007bff" title="닉네임 색상 선택">
+                    <button onclick="changeNickname()" class="small-button">변경</button>
+                </div>
             </div>
             <div class="chat-input">
                 <input type="text" id="chatMessage" placeholder="메시지를 입력하세요">
