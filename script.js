@@ -232,35 +232,6 @@ document.getElementById('fontSize')?.addEventListener('change', function(e) {
     saveFontSize(e.target.value);
 });
 
-// 보기 크기 조절 관련 변수와 함수
-let currentViewSize = 10;
-const MIN_SIZE = 2;
-const MAX_SIZE = 50;
-
-function updateViewSize() {
-    document.getElementById('currentViewSize').textContent = currentViewSize;
-    const messages = document.querySelectorAll('.message');
-    messages.forEach(message => {
-        // 내용과 작성자 모두 크기 조절
-        message.querySelector('.content').style.fontSize = `${currentViewSize}px`;
-        message.querySelector('.author').style.fontSize = `${currentViewSize}px`;
-    });
-}
-
-function increaseViewSize() {
-    if (currentViewSize < MAX_SIZE) {
-        currentViewSize += 2;
-        updateViewSize();
-    }
-}
-
-function decreaseViewSize() {
-    if (currentViewSize > MIN_SIZE) {
-        currentViewSize -= 2;
-        updateViewSize();
-    }
-}
-
 // 채팅 메시지 전송 함수 수정
 async function sendMessage() {
     const messageInput = document.getElementById('chatMessage');
@@ -386,31 +357,219 @@ async function clearAllMessages() {
     }
 }
 
-// 페이지 로드 시 채팅 메시지와 질문 목록 불러오기
-loadMessages();
-loadQuestions();
-updateNicknameDisplay();  // 닉네임 표시 업데이트
+// 보기 크기 조절 관련 변수와 함수
+let currentViewSize = 10;
+const MIN_SIZE = 2;
+const MAX_SIZE = 50;
 
-// Q&A 섹션 토글 기능
-document.getElementById('toggleQnAButton')?.addEventListener('click', function() {
-    const qnaSection = document.getElementById('qnaSection');
-    if (qnaSection.style.display === 'none') {
-        qnaSection.style.display = 'block';
-        this.textContent = 'Q&A 숨기기';
-    } else {
-        qnaSection.style.display = 'none';
-        this.textContent = 'Q&A 보기';
+function updateViewSize() {
+    document.getElementById('currentViewSize').textContent = currentViewSize;
+    const messages = document.querySelectorAll('.message');
+    messages.forEach(message => {
+        // 내용과 작성자 모두 크기 조절
+        message.querySelector('.content').style.fontSize = `${currentViewSize}px`;
+        message.querySelector('.author').style.fontSize = `${currentViewSize}px`;
+    });
+}
+
+function increaseViewSize() {
+    if (currentViewSize < MAX_SIZE) {
+        currentViewSize += 2;
+        updateViewSize();
     }
-});
+}
 
-// 페이지 로드 시 저장된 폰트 설정
+function decreaseViewSize() {
+    if (currentViewSize > MIN_SIZE) {
+        currentViewSize -= 2;
+        updateViewSize();
+    }
+}
+
+// 채팅창 크기 조절 관련 변수 수정
+let currentWindowSize = 85;
+const MIN_WINDOW_SIZE = 50;
+const MAX_WINDOW_SIZE = 95;
+
+function updateWindowSize() {
+    document.getElementById('currentWindowSize').textContent = currentWindowSize;
+    const chatBox = document.querySelector('.chat-box');
+    chatBox.style.height = `calc(${currentWindowSize}vh - 40px)`;
+}
+
+function increaseWindowSize() {
+    if (currentWindowSize < MAX_WINDOW_SIZE) {
+        currentWindowSize += 5;
+        updateWindowSize();
+    }
+}
+
+function decreaseWindowSize() {
+    if (currentWindowSize > MIN_WINDOW_SIZE) {
+        currentWindowSize -= 5;
+        updateWindowSize();
+    }
+}
+
+// 채팅창 너비 조절 관련 변수와 함수
+let currentWidthSize = 100;
+const MIN_WIDTH_SIZE = 50;
+const MAX_WIDTH_SIZE = 100;
+
+function updateWidthSize() {
+    document.getElementById('currentWidthSize').textContent = currentWidthSize;
+    const container = document.querySelector('.container');
+    container.style.maxWidth = `${currentWidthSize}%`;
+}
+
+function increaseWidthSize() {
+    if (currentWidthSize < MAX_WIDTH_SIZE) {
+        currentWidthSize += 5;
+        updateWidthSize();
+    }
+}
+
+function decreaseWidthSize() {
+    if (currentWidthSize > MIN_WIDTH_SIZE) {
+        currentWidthSize -= 5;
+        updateWidthSize();
+    }
+}
+
+// 페이지 로드 시 초기 크기 설정
 document.addEventListener('DOMContentLoaded', function() {
-    const fontSelect = document.getElementById('fontSelect');
-    const fontSize = document.getElementById('fontSize');
-    if (fontSelect) {
-        fontSelect.value = getSavedFont();
-    }
-    if (fontSize) {
-        fontSize.value = getSavedFontSize();
-    }
+    updateWindowSize();
+    updateWidthSize();
 });
+
+// 페이지 로드 시 실행되는 코드 수정
+loadMessages();
+updateNicknameDisplay();
+
+// 드래그 기능
+let isDragging = false;
+let currentX;
+let currentY;
+let initialX;
+let initialY;
+let xOffset = 0;
+let yOffset = 0;
+
+const chatBox = document.querySelector('.chat-box');
+const chatHeader = document.querySelector('.chat-header');
+
+// 초기 위치 및 크기 설정
+document.addEventListener('DOMContentLoaded', () => {
+    const rect = chatBox.getBoundingClientRect();
+    
+    // 초기 위치 설정 (화면 중앙)
+    xOffset = (window.innerWidth - rect.width) / 2;
+    yOffset = (window.innerHeight - rect.height) / 3;
+    
+    // 초기 크기 설정
+    chatBox.style.width = '800px';
+    chatBox.style.height = '600px';
+    
+    setTranslate(xOffset, yOffset, chatBox);
+});
+
+// 이벤트 리스너 추가
+chatBox.addEventListener('mousedown', dragStart);
+document.addEventListener('mousemove', drag);
+document.addEventListener('mouseup', dragEnd);
+
+function dragStart(e) {
+    // input, button, select 요소에서는 드래그 시작하지 않음
+    if (e.target.tagName.toLowerCase() === 'input' || 
+        e.target.tagName.toLowerCase() === 'button' || 
+        e.target.tagName.toLowerCase() === 'select') {
+        return;
+    }
+    
+    // 왼쪽 마우스 버튼일 때만 드래그 시작
+    if (e.button === 0) {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+        isDragging = true;
+        chatBox.style.transition = 'none';
+        chatBox.style.cursor = 'grabbing';
+    }
+}
+
+function drag(e) {
+    if (isDragging) {
+        e.preventDefault();
+        
+        currentX = e.clientX - initialX;
+        currentY = e.clientY - initialY;
+
+        // 화면 경계 체크 (여유 공간 추가)
+        const chatBoxRect = chatBox.getBoundingClientRect();
+        const maxX = window.innerWidth - chatBoxRect.width / 3;
+        const maxY = window.innerHeight - chatBoxRect.height / 3;
+        const minX = -chatBoxRect.width * 2/3;
+        const minY = -chatBoxRect.height * 2/3;
+
+        // 제한된 범위 내에서 이동
+        currentX = Math.max(minX, Math.min(currentX, maxX));
+        currentY = Math.max(minY, Math.min(currentY, maxY));
+
+        xOffset = currentX;
+        yOffset = currentY;
+
+        setTranslate(currentX, currentY, chatBox);
+    }
+}
+
+function dragEnd() {
+    if (isDragging) {
+        isDragging = false;
+        chatBox.style.transition = 'transform 0.2s ease-out';
+        chatBox.style.cursor = '';  // 커서 스타일 초기화
+        
+        // 화면 밖으로 너무 많이 나가지 않도록 조정
+        const chatBoxRect = chatBox.getBoundingClientRect();
+        const minVisible = 100;
+
+        if (chatBoxRect.right < minVisible) {
+            xOffset = minVisible - chatBoxRect.width;
+        }
+        if (chatBoxRect.bottom < minVisible) {
+            yOffset = minVisible - chatBoxRect.height;
+        }
+        if (chatBoxRect.left > window.innerWidth - minVisible) {
+            xOffset = window.innerWidth - minVisible;
+        }
+        if (chatBoxRect.top > window.innerHeight - minVisible) {
+            yOffset = window.innerHeight - minVisible;
+        }
+
+        setTranslate(xOffset, yOffset, chatBox);
+    }
+}
+
+function setTranslate(xPos, yPos, el) {
+    el.style.transform = `translate(${xPos}px, ${yPos}px)`;
+}
+
+// 창 크기가 변경될 때 위치 조정
+window.addEventListener('resize', () => {
+    const chatBoxRect = chatBox.getBoundingClientRect();
+    const minVisible = 100;
+
+    if (chatBoxRect.right < minVisible) {
+        xOffset = minVisible - chatBoxRect.width;
+    }
+    if (chatBoxRect.left > window.innerWidth - minVisible) {
+        xOffset = window.innerWidth - minVisible;
+    }
+    if (chatBoxRect.bottom < minVisible) {
+        yOffset = minVisible - chatBoxRect.height;
+    }
+    if (chatBoxRect.top > window.innerHeight - minVisible) {
+        yOffset = window.innerHeight - minVisible;
+    }
+
+    setTranslate(xOffset, yOffset, chatBox);
+});
+
