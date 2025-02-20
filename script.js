@@ -204,6 +204,63 @@ document.getElementById('nicknameColor')?.addEventListener('change', function(e)
     updateNicknameDisplay();
 });
 
+// 폰트 관련 함수 추가
+function getSavedFont() {
+    return localStorage.getItem('chatFont') || "'Noto Sans KR', sans-serif";
+}
+
+function saveFont(font) {
+    localStorage.setItem('chatFont', font);
+}
+
+// 폰트 선택 이벤트 리스너 추가
+document.getElementById('fontSelect')?.addEventListener('change', function(e) {
+    saveFont(e.target.value);
+});
+
+// 글자 크기 관련 함수 추가
+function getSavedFontSize() {
+    return localStorage.getItem('chatFontSize') || '10px';
+}
+
+function saveFontSize(size) {
+    localStorage.setItem('chatFontSize', size);
+}
+
+// 글자 크기 선택 이벤트 리스너 추가
+document.getElementById('fontSize')?.addEventListener('change', function(e) {
+    saveFontSize(e.target.value);
+});
+
+// 보기 크기 조절 관련 변수와 함수
+let currentViewSize = 10;
+const MIN_SIZE = 2;
+const MAX_SIZE = 50;
+
+function updateViewSize() {
+    document.getElementById('currentViewSize').textContent = currentViewSize;
+    const messages = document.querySelectorAll('.message');
+    messages.forEach(message => {
+        // 내용과 작성자 모두 크기 조절
+        message.querySelector('.content').style.fontSize = `${currentViewSize}px`;
+        message.querySelector('.author').style.fontSize = `${currentViewSize}px`;
+    });
+}
+
+function increaseViewSize() {
+    if (currentViewSize < MAX_SIZE) {
+        currentViewSize += 2;
+        updateViewSize();
+    }
+}
+
+function decreaseViewSize() {
+    if (currentViewSize > MIN_SIZE) {
+        currentViewSize -= 2;
+        updateViewSize();
+    }
+}
+
 // 채팅 메시지 전송 함수 수정
 async function sendMessage() {
     const messageInput = document.getElementById('chatMessage');
@@ -234,6 +291,8 @@ async function sendMessage() {
             content: message,
             author: author,
             color: color,
+            font: getSavedFont(),
+            fontSize: getSavedFontSize(),  // 글자 크기 추가
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
         messageInput.value = '';
@@ -246,15 +305,19 @@ async function sendMessage() {
 // 채팅 메시지 업데이트
 function updateChatMessages(messages) {
     const chatMessages = document.getElementById('chatMessages');
+    const currentUser = getSavedNickname();
+    
     chatMessages.innerHTML = messages.map(message => {
         const timestamp = message.timestamp ? 
             new Date(message.timestamp.toDate()).toLocaleString() : 
             '시간 정보 없음';
         
+        const isMyMessage = message.author === currentUser;
+        
         return `
-            <div class="message">
-                <span class="author" style="color: ${message.color || '#007bff'}">${message.author}</span>
-                <span class="content">${message.content}</span>
+            <div class="message ${isMyMessage ? 'my-message' : 'other-message'}">
+                <span class="author" style="color: ${message.color || '#007bff'}; font-size: ${currentViewSize}px">${message.author}</span>
+                <span class="content" style="font-family: ${message.font || "'Noto Sans KR', sans-serif"}; font-size: ${currentViewSize}px">${message.content}</span>
                 <span class="time">${timestamp}</span>
             </div>
         `;
@@ -337,5 +400,17 @@ document.getElementById('toggleQnAButton')?.addEventListener('click', function()
     } else {
         qnaSection.style.display = 'none';
         this.textContent = 'Q&A 보기';
+    }
+});
+
+// 페이지 로드 시 저장된 폰트 설정
+document.addEventListener('DOMContentLoaded', function() {
+    const fontSelect = document.getElementById('fontSelect');
+    const fontSize = document.getElementById('fontSize');
+    if (fontSelect) {
+        fontSelect.value = getSavedFont();
+    }
+    if (fontSize) {
+        fontSize.value = getSavedFontSize();
     }
 });
