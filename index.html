@@ -9,65 +9,63 @@
 </head>
 <body>
     <div class="container">
-        <h1 data-text="톡투유">톡투유</h1>
-        <button id="toggleQnAButton" class="toggle-button">Q&A 보기/숨기기</button>
+        <h1 data-text="톡투유">-</h1>
         
         <div class="chat-box">
-            <div class="chat-header">
-                <div class="chat-title">
-                    <h2>실시간 채팅</h2>
-                    <h6 style="align-items: start;">실시간 채팅방</h6>
-                </div>
-                <div class="chat-controls">
-                    <div class="size-control">
-                        <span>보기 크기: </span>
-                        <button onclick="decreaseViewSize()" class="size-button">-</button>
-                        <span id="currentViewSize">10</span>
-                        <button onclick="increaseViewSize()" class="size-button">+</button>
+            <div class="chat-inner">
+                <div class="chat-header">
+                    <div class="chat-title">
+                        <h2>실시간 채팅</h2>
+                        <h6 style="align-items: start;">실시간 채팅방</h6>
                     </div>
-                    <button onclick="clearAllMessages()" class="clear-button">전체 삭제</button>
+                    <div class="chat-controls">
+                        <div class="size-control">
+                            <span>글자 크기: </span>
+                            <button onclick="decreaseViewSize()" class="size-button">-</button>
+                            <span id="currentViewSize">10</span>
+                            <button onclick="increaseViewSize()" class="size-button">+</button>
+                        </div>
+                        <div class="size-control">
+                            <span>창 높이: </span>
+                            <button onclick="decreaseWindowSize()" class="size-button">-</button>
+                            <span id="currentWindowSize">85</span>
+                            <button onclick="increaseWindowSize()" class="size-button">+</button>
+                        </div>
+                        <div class="size-control">
+                            <span>창 너비: </span>
+                            <button onclick="decreaseWidthSize()" class="size-button">-</button>
+                            <span id="currentWidthSize">100</span>
+                            <button onclick="increaseWidthSize()" class="size-button">+</button>
+                        </div>
+                        <button onclick="clearAllMessages()" class="clear-button">전체 삭제</button>
+                    </div>
                 </div>
-            </div>
-            <div class="chat-messages" id="chatMessages"></div>
-            <div class="chat-nickname">
-                <div class="nickname-container">
-                    <span>현재 닉네임: <span id="chatAuthorDisplay"></span></span>
-                    <input type="color" id="nicknameColor" value="#007bff" title="닉네임 색상 선택">
-                    <select id="fontSelect" class="font-select">
-                        <option value="'Noto Sans KR', sans-serif">기본체</option>
-                        <option value="'Nanum Gothic', sans-serif">나눔고딕</option>
-                        <option value="'Nanum Myeongjo', serif">나눔명조</option>
-                        <option value="'Nanum Pen Script', cursive">나눔펜</option>
-                        <option value="'Gaegu', cursive">개구체</option>
-                        <option value="'Poor Story', cursive">푸어스토리</option>
-                    </select>
-                    <select id="fontSize" class="font-select">
-                        <option value="12px">작게</option>
-                        <option value="14px" selected>기본</option>
-                        <option value="16px">크게</option>
-                        <option value="18px">더 크게</option>
-                        <option value="20px">매우 크게</option>
-                    </select>
-                    <button onclick="changeNickname()" class="small-button">변경</button>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-nickname">
+                    <div class="nickname-container">
+                        <span>현재 닉네임: <span id="chatAuthorDisplay"></span></span>
+                        <input type="color" id="nicknameColor" value="#007bff" title="닉네임 색상 선택">
+                        <select id="fontSelect" class="font-select">
+                            <option value="'Noto Sans KR', sans-serif">기본체</option>
+                            <option value="'Nanum Gothic', sans-serif">나눔고딕</option>
+                            <option value="'Nanum Myeongjo', serif">나눔명조</option>
+                            <option value="'Nanum Pen Script', cursive">나눔펜</option>
+                            <option value="'Gaegu', cursive">개구체</option>
+                            <option value="'Poor Story', cursive">푸어스토리</option>
+                        </select>
+                        <select id="fontSize" class="font-select">
+                            <option value="12px">작게</option>
+                            <option value="14px" selected>기본</option>
+                            <option value="16px">크게</option>
+                            <option value="18px">더 크게</option>
+                            <option value="20px">매우 크게</option>
+                        </select>
+                        <button onclick="changeNickname()" class="small-button">변경</button>
+                    </div>
                 </div>
-            </div>
-            <div class="chat-input">
-                <input type="text" id="chatMessage" placeholder="메시지를 입력하세요 (Enter를 눌러 전송)">
-            </div>
-        </div>
-
-        <div id="qnaSection" class="qna-section" style="display: none;">
-            <div class="question-form">
-                <h2>질문하기</h2>
-                <input type="text" id="questionTitle" placeholder="질문 제목">
-                <input type="text" id="authorName" placeholder="작성자 이름">
-                <textarea id="questionContent" placeholder="질문 내용을 입력하세요"></textarea>
-                <button onclick="addQuestion()">질문 등록</button>
-            </div>
-
-            <div class="questions-list">
-                <h2>질문 목록</h2>
-                <div id="questionsList"></div>
+                <div class="chat-input">
+                    <input type="text" id="chatMessage" placeholder="메시지를 입력하세요 (Enter를 눌러 전송)">
+                </div>
             </div>
         </div>
     </div>
