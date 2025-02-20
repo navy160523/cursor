@@ -20,7 +20,54 @@ body {
 h1 {
     text-align: center;
     margin-bottom: 30px;
-    color: #ffffff;
+    background: linear-gradient(45deg, #4285f4, #34a853, #fbbc05, #ea4335);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 3em;
+    font-weight: 700;
+    letter-spacing: 2px;
+    animation: gradientMove 8s ease infinite;
+    padding: 10px;
+    position: relative;
+    text-shadow: 
+        2px 2px 4px rgba(0, 0, 0, 0.3),
+        4px 4px 8px rgba(0, 0, 0, 0.2),
+        6px 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* 호버 효과 추가 */
+h1:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+/* 3D 효과를 위한 가상 요소 추가 */
+h1::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    background: linear-gradient(45deg, #4285f4, #34a853, #fbbc05, #ea4335);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: blur(10px);
+    opacity: 0.5;
+    animation: gradientMove 8s ease infinite;
 }
 
 .question-form {
@@ -111,6 +158,14 @@ button:hover {
     padding: 10px;
     margin-bottom: 10px;
     background: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-messages::after {
+    content: '';
+    display: table;
+    clear: both;
 }
 
 .chat-input {
@@ -149,22 +204,46 @@ button:hover {
     margin: 8px 0;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     border: 1px solid #333;
+    max-width: 70%;
+    display: flex;
+    flex-direction: column;
 }
 
+.my-message {
+    align-self: flex-end;
+    background: #1e3a8a;
+    border-color: #2563eb;
+}
+
+.other-message {
+    align-self: flex-start;
+}
+
+.chat-messages::after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+/* 메시지 내부 요소들의 정렬 조정 */
 .message .content {
     color: #ffffff;
-    display: block;
-    margin-top: 5px;
-}
-
-.message .author {
-    font-weight: bold;
+    word-break: break-word;
 }
 
 .message .time {
     color: #888;
     font-size: 0.8em;
-    margin-left: 10px;
+    margin-top: 5px;
+    align-self: flex-end;
+}
+
+.my-message .author {
+    display: none;
+}
+
+.other-message .author {
+    margin-bottom: 5px;
 }
 
 .chat-nickname {
@@ -407,7 +486,8 @@ button:hover {
 .nickname-container {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 #nicknameColor {
@@ -432,23 +512,6 @@ button:hover {
     display: flex;
     align-items: center;
     gap: 10px;
-}
-
-.auto-clear-toggle {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
-}
-
-.auto-clear-toggle input {
-    width: auto;
-    margin: 0;
-}
-
-.toggle-label {
-    font-size: 0.9em;
-    color: #ffffff;
 }
 
 .chat-title {
@@ -500,4 +563,63 @@ button:hover {
 
 .qna-section {
     transition: all 0.3s ease;
+}
+
+.font-select {
+    padding: 5px;
+    border-radius: 4px;
+    background: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #444;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.font-select:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+@media (max-width: 480px) {
+    .nickname-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .font-select {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+}
+
+.size-control {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-right: 10px;
+    color: #ffffff;
+    font-size: 0.9em;
+}
+
+.size-button {
+    background: #363636;
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+}
+
+.size-button:hover {
+    background: #444444;
+}
+
+#currentViewSize {
+    min-width: 24px;
+    text-align: center;
 } 
