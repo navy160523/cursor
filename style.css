@@ -12,14 +12,26 @@ body {
     color: #ffffff;
 }
 
+/* 기본 반응형 설정 */
+:root {
+    --header-height: 60px;
+    --controls-height: 40px;
+    --input-height: 50px;
+    --spacing: 20px;
+}
+
 .container {
-    max-width: 800px;
+    max-width: 100%;
     margin: 0 auto;
+    min-height: 100vh;
+    position: relative;
+    padding: 0 var(--spacing);
+    min-width: 320px;
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     background: linear-gradient(45deg, #4285f4, #34a853, #fbbc05, #ea4335);
     -webkit-background-clip: text;
     background-clip: text;
@@ -139,27 +151,77 @@ button:hover {
 }
 
 .chat-box {
-    background: #1a1a1a;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    height: calc(70vh - 40px);
+    flex: none;
     display: flex;
     flex-direction: column;
+    gap: var(--spacing);
+    background: #1a1a1a;
+    border-radius: 8px;
+    position: absolute;
+    border: 3px solid #444;
+    min-width: 540px;
+    min-height: 500px;
+    max-width: calc(100vw - 40px);
+    max-height: calc(100vh - 40px);
+    padding: 20px;
+    margin-bottom: 20px;
+    left: 0;
+    transform: none;
+    z-index: 1000;
+    cursor: grab;
+    resize: both !important;
+    overflow: hidden !important;
+}
+
+/* 내부 컨테이너 추가 */
+.chat-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    gap: var(--spacing);
+    overflow: hidden;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 15px;
+    user-select: none;
+}
+
+.chat-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.size-control {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.nickname-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .chat-messages {
     flex: 1;
-    height: auto;
+    min-height: 0;
     overflow-y: auto;
     border: 1px solid #333;
     border-radius: 4px;
-    padding: 10px;
+    padding: 15px;
     margin-bottom: 10px;
     background: #1a1a1a;
-    display: flex;
-    flex-direction: column;
 }
 
 .chat-messages::after {
@@ -181,6 +243,9 @@ button:hover {
     padding: 12px;
     border-radius: 6px;
     font-size: 14px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
 .chat-input input::placeholder {
@@ -207,6 +272,10 @@ button:hover {
     max-width: 70%;
     display: flex;
     flex-direction: column;
+    transition: all 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 .my-message {
@@ -219,16 +288,11 @@ button:hover {
     align-self: flex-start;
 }
 
-.chat-messages::after {
-    content: '';
-    display: table;
-    clear: both;
-}
-
 /* 메시지 내부 요소들의 정렬 조정 */
 .message .content {
     color: #ffffff;
     word-break: break-word;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .message .time {
@@ -263,13 +327,6 @@ button:hover {
     color: #007bff;
 }
 
-.chat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
 .chat-header h2, .chat-header h6 {
     color: #ffffff;
 }
@@ -284,61 +341,104 @@ button:hover {
     background-color: #c82333;
 }
 
-/* 반응형 디자인 */
-@media (max-width: 768px) {
+/* 큰 화면 (1200px 이상) */
+@media (min-width: 1200px) {
     .container {
-        padding: 10px;
+        padding: 0 var(--spacing);
     }
-
-    .chat-box {
-        height: calc(80vh - 20px);
-    }
-
-    .chat-input {
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .chat-input button {
-        width: 100%;
-    }
-
-    .question-form, .question-card {
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 1.5em;
-    }
-
-    h2 {
-        font-size: 1.2em;
+    
+    .chat-controls {
+        justify-content: flex-end;
     }
 }
 
-@media (max-width: 480px) {
-    .chat-box {
-        height: calc(85vh - 20px);
+/* 중간 화면 (768px ~ 1199px) */
+@media (max-width: 1199px) {
+    .container {
+        padding: 0 15px;
     }
-
-    .chat-nickname {
+    
+    .chat-header {
         flex-direction: column;
-        align-items: flex-start;
     }
-
-    .chat-nickname .small-button {
-        margin-top: 5px;
-        margin-left: 0;
-    }
-
-    .answer-form {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .answer-form button {
+    
+    .chat-controls {
         width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* 작은 화면 (768px 이하) */
+@media (max-width: 768px) {
+    :root {
+        --spacing: 10px;
+    }
+    
+    h1 {
+        font-size: 2em;
+        margin-bottom: 15px;
+    }
+    
+    .chat-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .size-control {
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+    .clear-button {
+        width: 100%;
+    }
+    
+    .nickname-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .font-select {
+        width: 100%;
+    }
+    
+    .chat-input input {
+        font-size: 16px; /* 모바일에서 자동 확대 방지 */
+    }
+    
+    .chat-box {
+        resize: none !important;
+        min-width: 100%;
+        min-height: 500px;
+        width: 100%;
+        height: calc(100vh - 40px);
+    }
+}
+
+/* 매우 작은 화면 (480px 이하) */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 10px;
+    }
+    
+    h1 {
+        font-size: 1.5em;
+    }
+    
+    .message {
+        max-width: 85%;
+        padding: 8px 12px;
+    }
+    
+    .chat-input {
+        padding: 8px;
+    }
+    
+    .size-button {
+        width: 30px;
+        height: 30px;
     }
 }
 
@@ -388,15 +488,6 @@ button:hover {
     box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
-.message {
-    background: #1a1a1a;
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin: 8px 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    border: 1px solid #333;
-}
-
 .message .author {
     color: var(--primary-color);
     font-weight: 500;
@@ -441,19 +532,6 @@ button:hover {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-    .chat-box {
-        height: calc(80vh - 20px);
-    }
-
-    .metadata {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
-    }
-}
-
 /* 스크롤바 커스텀 */
 ::-webkit-scrollbar {
     width: 6px;
@@ -483,13 +561,6 @@ button:hover {
     border: 1px solid #333;
 }
 
-.nickname-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
 #nicknameColor {
     width: 30px;
     height: 30px;
@@ -506,12 +577,6 @@ button:hover {
 #nicknameColor::-webkit-color-swatch {
     border: none;
     border-radius: 4px;
-}
-
-.chat-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
 .chat-title {
@@ -580,27 +645,6 @@ button:hover {
     border-color: #007bff;
 }
 
-@media (max-width: 480px) {
-    .nickname-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .font-select {
-        width: 100%;
-        margin-bottom: 5px;
-    }
-}
-
-.size-control {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-right: 10px;
-    color: #ffffff;
-    font-size: 0.9em;
-}
-
 .size-button {
     background: #363636;
     color: white;
@@ -622,4 +666,27 @@ button:hover {
 #currentViewSize {
     min-width: 24px;
     text-align: center;
+}
+
+.chat-box:active {
+    cursor: grabbing;
+}
+
+/* 크기 조절 핸들 스타일링 */
+.chat-box::-webkit-resizer {
+    background-color: #444;
+    border: 2px solid #666;
+    border-radius: 4px;
+    width: 16px;
+    height: 16px;
+    visibility: visible !important;
+    display: block !important;
+}
+
+/* Firefox용 리사이저 스타일링 */
+@-moz-document url-prefix() {
+    .chat-box {
+        resize: both !important;
+        overflow: hidden !important;
+    }
 } 
