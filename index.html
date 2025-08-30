@@ -3,72 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>톡투유</title>
+    <title>카카오톡 채팅</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Gaegu&family=Poor+Story&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1 data-text="톡투유">-</h1>
-        
-        <div class="chat-box">
-            <div class="chat-inner">
-                <div class="chat-header">
-                    <div class="chat-title">
-                        <h2>실시간 채팅</h2>
-                        <h6 style="align-items: start;">실시간 채팅방</h6>
+    <div class="chat-container">
+        <!-- 헤더 -->
+        <div class="chat-header">
+            <div class="header-left">
+                <i class="fas fa-chevron-left"></i>
+                <div class="profile-info">
+                    <div class="profile-image">
+                        <i class="fas fa-user"></i>
                     </div>
-                    <div class="chat-controls">
-                        <div class="size-control">
-                            <span>글자 크기: </span>
-                            <button onclick="decreaseViewSize()" class="size-button">-</button>
-                            <span id="currentViewSize">10</span>
-                            <button onclick="increaseViewSize()" class="size-button">+</button>
-                        </div>
-                        <div class="size-control">
-                            <span>창 높이: </span>
-                            <button onclick="decreaseWindowSize()" class="size-button">-</button>
-                            <span id="currentWindowSize">85</span>
-                            <button onclick="increaseWindowSize()" class="size-button">+</button>
-                        </div>
-                        <div class="size-control">
-                            <span>창 너비: </span>
-                            <button onclick="decreaseWidthSize()" class="size-button">-</button>
-                            <span id="currentWidthSize">100</span>
-                            <button onclick="increaseWidthSize()" class="size-button">+</button>
-                        </div>
-                        <button onclick="clearAllMessages()" class="clear-button">전체 삭제</button>
+                    <div class="profile-text">
+                        <h3>친구</h3>
+                        <span class="status">온라인</span>
                     </div>
                 </div>
-                <div class="chat-messages" id="chatMessages"></div>
-                <div class="chat-nickname">
-                    <div class="nickname-container">
-                        <span>현재 닉네임: <span id="chatAuthorDisplay"></span></span>
-                        <input type="color" id="nicknameColor" value="#007bff" title="닉네임 색상 선택">
-                        <select id="fontSelect" class="font-select">
-                            <option value="'Noto Sans KR', sans-serif">기본체</option>
-                            <option value="'Nanum Gothic', sans-serif">나눔고딕</option>
-                            <option value="'Nanum Myeongjo', serif">나눔명조</option>
-                            <option value="'Nanum Pen Script', cursive">나눔펜</option>
-                            <option value="'Gaegu', cursive">개구체</option>
-                            <option value="'Poor Story', cursive">푸어스토리</option>
-                        </select>
-                        <select id="fontSize" class="font-select">
-                            <option value="12px">작게</option>
-                            <option value="14px" selected>기본</option>
-                            <option value="16px">크게</option>
-                            <option value="18px">더 크게</option>
-                            <option value="20px">매우 크게</option>
-                        </select>
-                        <button onclick="changeNickname()" class="small-button">변경</button>
-                    </div>
-                </div>
-                <div class="chat-input">
-                    <input type="text" id="chatMessage" placeholder="메시지를 입력하세요 (Enter를 눌러 전송)">
-                </div>
+            </div>
+            <div class="header-right">
+                <i class="fas fa-search"></i>
+                <i class="fas fa-ellipsis-v"></i>
+            </div>
+        </div>
+
+        <!-- 채팅 영역 -->
+        <div class="chat-messages" id="chatMessages">
+            <!-- 메시지들이 여기에 동적으로 추가됩니다 -->
+        </div>
+
+        <!-- 입력 영역 -->
+        <div class="chat-input">
+            <div class="input-container">
+                <i class="fas fa-plus"></i>
+                <input type="text" id="messageInput" placeholder="메시지를 입력하세요...">
+                <i class="fas fa-smile"></i>
+                <button id="sendButton">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
         </div>
     </div>
+
+    <!-- Firebase 스크립트 -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="script.js"></script>
