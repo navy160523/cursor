@@ -303,3 +303,190 @@ body {
 .chat-messages::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
 } 
+
+/* 이모티콘 선택기 */
+.emoji-picker {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 320px;
+    height: 400px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: none;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+}
+
+.emoji-picker.show {
+    display: block;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.emoji-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    background: #f8f9fa;
+}
+
+.emoji-picker-header span {
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+}
+
+.close-emoji-picker {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.close-emoji-picker:hover {
+    background: #e9ecef;
+    color: #333;
+}
+
+.emoji-categories {
+    display: flex;
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    background: white;
+    overflow-x: auto;
+    gap: 5px;
+}
+
+.emoji-category {
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    border: 1px solid transparent;
+}
+
+.emoji-category:hover {
+    background: #f8f9fa;
+    color: #333;
+}
+
+.emoji-category.active {
+    background: #fee500;
+    color: #333;
+    border-color: #fee500;
+    font-weight: 600;
+}
+
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 5px;
+    padding: 15px;
+    height: 280px;
+    overflow-y: auto;
+}
+
+.emoji-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.emoji-item:hover {
+    background: #f8f9fa;
+    transform: scale(1.1);
+}
+
+.emoji-item:active {
+    transform: scale(0.95);
+}
+
+/* 스크롤바 스타일링 */
+.emoji-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.emoji-grid::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.emoji-grid::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.emoji-grid::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 카테고리 스크롤바 */
+.emoji-categories::-webkit-scrollbar {
+    height: 4px;
+}
+
+.emoji-categories::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+}
+
+.emoji-categories::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 2px;
+}
+
+.emoji-categories::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+    .emoji-picker {
+        width: 100%;
+        right: 0;
+        left: 0;
+        bottom: 70px;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .emoji-grid {
+        grid-template-columns: repeat(7, 1fr);
+    }
+    
+    .emoji-item {
+        width: 28px;
+        height: 28px;
+        font-size: 18px;
+    }
+} 
